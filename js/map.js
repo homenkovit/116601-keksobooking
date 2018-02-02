@@ -18,11 +18,17 @@ var getRandomAvatar = function (min, max) {
   return randomAvatar;
 };
 var getRandomElementFromArray = function (array) {
-  var randomElement = Math.floor(Math.random() * array.length);
-  return array[randomElement];
+  var randomIndex = Math.floor(Math.random() * array.length);
+  var randomElement = array[randomIndex];
+  array.splice(randomIndex, 1);
+  return randomElement;
 };
-var compareRandom = function (a, b) {
-  return 0.5 - Math.random();
+var shuffleArray = function (array) {
+  var compareRandom = function (a, b) {
+    return 0.5 - Math.random();
+  }
+  var sortArray = array.sort(compareRandom);
+  return sortArray;
 }
 
 var createSimilarAd = function (offerTitleArray, offerTypeArray, offerCheckinTimeArray, offerCheckoutTimeArray, offerPhotosArray, offerFeaturesArray) {
@@ -38,7 +44,7 @@ var createSimilarAd = function (offerTitleArray, offerTypeArray, offerCheckinTim
   var offerAddress = locationX + ', ' + locationY;
   var offerCheckinTime = getRandomElementFromArray(offerCheckinTimeArray);
   var offerCheckoutTime = getRandomElementFromArray(offerCheckoutTimeArray);
-  var offerPhotos = offerPhotosArray.sort(compareRandom);
+  var offerPhotos = shuffleArray(offerFeaturesArray);
   var offerFeatures = offerFeaturesArray;
 
   var ad = {
