@@ -11,12 +11,21 @@ var OFFER_PHOTOS_ARRAY = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 
 var getRandomNumber = function (min, max) {
   var randomNumber = min + Math.random() * (max + 1 - min);
   randomNumber = Math.floor(randomNumber);
+
   return randomNumber;
 };
 var getRandomElementFromArray = function (array) {
   var randomIndex = Math.floor(Math.random() * array.length);
   var randomElement = array[randomIndex];
+
+  return randomElement;
+}
+var getUniqRandomElementFromArray = function (array) {
+  var randomIndex = Math.floor(Math.random() * array.length);
+  var randomElement = array[randomIndex];
+
   array.splice(randomIndex, 1);
+
   return randomElement;
 };
 var shuffleArray = function (array) {
@@ -24,13 +33,14 @@ var shuffleArray = function (array) {
     return 0.5 - Math.random();
   }
   var sortArray = array.sort(compareRandom);
+
   return sortArray;
-}
+};
 
 var createSimilarAd = function (offerAvatarIndexArray, offerTitleArray, offerTypeArray, offerCheckinTimeArray, offerCheckoutTimeArray, offerPhotosArray, offerFeaturesArray) {
-  var avatarIndex = getRandomElementFromArray(offerAvatarIndexArray);
+  var avatarIndex = getUniqRandomElementFromArray(offerAvatarIndexArray);
   var avatar = 'img/avatars/user' + avatarIndex + '.png';
-  var offerTitle = getRandomElementFromArray(offerTitleArray);
+  var offerTitle = getUniqRandomElementFromArray(offerTitleArray);
   var offerPrice = getRandomNumber(1000, 1000000);
   var offerType = getRandomElementFromArray(offerTypeArray);
   var offerRooms = getRandomNumber(1, 5);
@@ -92,13 +102,54 @@ var renderPinButton = function (similarAd) {
   pinAvatar.src = similarAd.author.avatar;
 
   return pinButton;
+};
+
+var renderMapCard = function (similarAd) {
+  var mapCard = mapTemplateContent.querySelector('.map__card').cloneNode(true);
+  var mapCardAvatar = mapCard.querySelector('.popup__avatar');
+  var mapCardTitle = mapCard.querySelector('h3');
+  var mapCardAddress = mapCardTitle.nextElementSibling.querySelector('small');
+  var mapCardPrice = mapCard.querySelector('.popup__price');
+  var mapCardType = mapCard.querySelector('h4');
+  var mapCardRooms = mapCardType.nextElementSibling;
+  var mapCardCheckInOut = mapCardRooms.nextElementSibling;
+  var mapCardFeatures = mapCard.querySelector('.popup__features');
+  var mapCardDescription = mapCardFeatures.nextElementSibling;
+  var mapCardPhotos = mapCard.querySelector('.popup__pictures');
+
+  mapCardAvatar.src = similarAd.author.avatar;
+  mapCardTitle.textContent = similarAd.offer.title;
+  mapCardAddress.textContent = similarAd.offer.address;
+  mapCardPrice.textContent = similarAd.offer.price + '&#x20bd;/ночь';
+
+  if (similarAd.offer.type === 'flat') {
+    mapCardType.textContent = 'Квартира';
+  } else {
+    if (similarAd.offer.type === 'house') {
+      mapCardType.textContent = 'Дом';
+    } else {
+      mapCardType.textContent = 'Бунгало';
+    }
+  }
+
+  mapCardRooms.textContent = similarAd.offer.rooms + ' комнаты для ' + similarAd.offer.guests + ' гостей';
+  mapCardCheckInOut.textContent = 'Заезд после ' + similarAd.offer.checkin + ', выезд до ' + similarAd.offer.checkout;
+  mapCardDescription.textContent = similarAd.offer.description;
+
+  return mapCard;
+};
+
+var pinButtonFragment = document.createDocumentFragment();
+for (var j = 0; j < similarAdArray.length; j++) {
+  pinButtonFragment.appendChild(renderPinButton(similarAdArray[j]));
+}
+var mapPinList = mapWindow.querySelector('.map__pins');
+mapPinList.appendChild(pinButtonFragment);
+
+var mapCardFragment = document.createDocumentFragment();
+for (var k = 0; k < similarAdArray.length; k++) {
+  mapCardFragment.appendChild(renderMapCard(similarAdArray[k]));
 }
 
-var pinFragment = document.createDocumentFragment();
-for (var j = 0; j < similarAdArray.length; j++) {
-  pinFragment.appendChild(renderPinButton(similarAdArray[j]));
-  console.log(pinFragment);
-}
-console.log(pinFragment);
-var mapPinList = mapWindow.querySelector('.map__pins');
-mapPinList.appendChild(pinFragment);
+var mapFiltersBlock = mapWindow.querySelector('.map__filters-container');
+mapWindow.insertBefore(mapCardFragment, mapFiltersBlock);
