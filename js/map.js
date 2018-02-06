@@ -19,7 +19,7 @@ var getRandomElementFromArray = function (array) {
   var randomElement = array[randomIndex];
 
   return randomElement;
-}
+};
 var getUniqRandomElementFromArray = function (array) {
   var randomIndex = Math.floor(Math.random() * array.length);
   var randomElement = array[randomIndex];
@@ -36,8 +36,15 @@ var shuffleArray = function (array) {
 
   return sortArray;
 };
+var getRandomLengthArray = function (array) {
+  var randomLength = Math.floor(array.length - Math.random() * array.length);
 
-var createSimilarAd = function (offerAvatarIndexArray, offerTitleArray, offerTypeArray, offerCheckinTimeArray, offerCheckoutTimeArray, offerPhotosArray, offerFeaturesArray) {
+  array.splice(randomLength, array.length - 1);
+
+  return array;
+};
+
+var createSimilarAd = function (offerAvatarIndexArray, offerTitleArray, offerTypeArray, offerCheckinTimeArray, offerCheckoutTimeArray, offerFeaturesArray, offerPhotosArray) {
   var avatarIndex = getUniqRandomElementFromArray(offerAvatarIndexArray);
   var avatar = 'img/avatars/user' + avatarIndex + '.png';
   var offerTitle = getUniqRandomElementFromArray(offerTitleArray);
@@ -50,8 +57,8 @@ var createSimilarAd = function (offerAvatarIndexArray, offerTitleArray, offerTyp
   var offerAddress = locationX + ', ' + locationY;
   var offerCheckinTime = getRandomElementFromArray(offerCheckinTimeArray);
   var offerCheckoutTime = getRandomElementFromArray(offerCheckoutTimeArray);
-  var offerPhotos = shuffleArray(offerFeaturesArray);
-  var offerFeatures = offerFeaturesArray;
+  var offerFeatures = getRandomLengthArray(offerFeaturesArray);
+  var offerPhotos = shuffleArray(offerPhotosArray);
 
   var ad = {
     author: {
@@ -83,7 +90,7 @@ var createSimilarAd = function (offerAvatarIndexArray, offerTitleArray, offerTyp
 
 var similarAdArray = [];
 for (var i = 0; i < 8; i++) {
-  similarAdArray[i] = createSimilarAd(OFFER_AVATAR_INDEX_ARRAY, OFFER_TITLE_ARRAY, OFFER_TYPE_ARRAY, OFFER_CHECKIN_TIME_ARRAY, OFFER_CHECKOUT_TIME_ARRAY, OFFER_PHOTOS_ARRAY, OFFER_FEATURES_ARRAY);
+  similarAdArray[i] = createSimilarAd(OFFER_AVATAR_INDEX_ARRAY, OFFER_TITLE_ARRAY, OFFER_TYPE_ARRAY, OFFER_CHECKIN_TIME_ARRAY, OFFER_CHECKOUT_TIME_ARRAY, OFFER_FEATURES_ARRAY, OFFER_PHOTOS_ARRAY);
 }
 
 var mapWindow = document.querySelector('.map');
@@ -117,6 +124,17 @@ var renderMapCard = function (similarAd) {
   var mapCardDescription = mapCardFeatures.nextElementSibling;
   var mapCardPhotos = mapCard.querySelector('.popup__pictures');
 
+  var renderPhotos = function (similarAd) {
+    mapCardPhotos.cloneNode(true);
+    var mapCardPhotosImg = mapCardPhotos.querySelector('img');
+
+    mapCardPhotosImg.src = similarAd;
+    mapCardPhotosImg.width = '60';
+    mapCardPhotosImg.height = '60';
+
+    return mapCardPhotos;
+  }
+
   mapCardAvatar.src = similarAd.author.avatar;
   mapCardTitle.textContent = similarAd.offer.title;
   mapCardAddress.textContent = similarAd.offer.address;
@@ -135,6 +153,12 @@ var renderMapCard = function (similarAd) {
   mapCardRooms.textContent = similarAd.offer.rooms + ' комнаты для ' + similarAd.offer.guests + ' гостей';
   mapCardCheckInOut.textContent = 'Заезд после ' + similarAd.offer.checkin + ', выезд до ' + similarAd.offer.checkout;
   mapCardDescription.textContent = similarAd.offer.description;
+
+  var mapCardPhotosFragment = document.createDocumentFragment();
+  for (i = 0; i < similarAd.offer.photos.length; i++) {
+    mapCardPhotosFragment.appendChild(renderPhotos(similarAd.offer.photos[i]));
+  }
+  mapCard.appendChild(mapCardPhotosFragment);
 
   return mapCard;
 };
