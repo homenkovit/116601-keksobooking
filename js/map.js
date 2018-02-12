@@ -205,13 +205,6 @@ var onPinButtonClickHandler = function (button, card) {
     }
   });
 };
-var pinButtonFragment = document.createDocumentFragment();
-for (var o = 0; o < similarAdArray.length; o++) {
-  var pin = renderPinButton(similarAdArray[o]);
-  var card = renderMapCard(similarAdArray[o]);
-  onPinButtonClickHandler(pin, card);
-  pinButtonFragment.appendChild(pin);
-}
 var mapPinList = mapWindow.querySelector('.map__pins');
 
 var mapFiltersBlock = mapWindow.querySelector('.map__filters-container');
@@ -262,6 +255,13 @@ var setAddress = function (pinButton, activeState) {
 setAddress(mainMapPinButton, false);
 
 var getActiveState = function () {
+  var pinButtonFragment = document.createDocumentFragment();
+  for (var o = 0; o < similarAdArray.length; o++) {
+    var pin = renderPinButton(similarAdArray[o]);
+    var card = renderMapCard(similarAdArray[o]);
+    onPinButtonClickHandler(pin, card);
+    pinButtonFragment.appendChild(pin);
+  }
   mapPinList.appendChild(pinButtonFragment);
   mapWindow.classList.remove('map--faded');
   setAddress(mainMapPinButton, true);
@@ -350,6 +350,10 @@ var resetForm = function () {
   var formInputs = noticeForm.querySelectorAll('input');
   for (var e = 0; e < formInputs.length; e++) {
     formInputs[e].value = '';
+  }
+  var formSelects = noticeForm.querySelectorAll('select');
+  for (var q = 0; q < formSelects.length; q++) {
+    formSelects[q].selectedIndex = 0;
   }
   var pinButtons = mapPinList.querySelectorAll('.map__pin');
   for (var r = 0; r < pinButtons.length; r++) {
