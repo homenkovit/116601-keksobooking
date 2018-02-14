@@ -205,23 +205,15 @@ var onPinButtonClickHandler = function (button, card) {
     }
   });
 };
-var pinButtonFragment = document.createDocumentFragment();
-for (var o = 0; o < similarAdArray.length; o++) {
-  var pin = renderPinButton(similarAdArray[o]);
-  var card = renderMapCard(similarAdArray[o]);
-  onPinButtonClickHandler(pin, card);
-  pinButtonFragment.appendChild(pin);
-}
 var mapPinList = mapWindow.querySelector('.map__pins');
 
 var mapFiltersBlock = mapWindow.querySelector('.map__filters-container');
 
 var mainMapPinButton = mapWindow.querySelector('.map__pin--main');
+var mainMapPinButtonWidth = mainMapPinButton.offsetWidth;
+var mainMapPinButtonHeight = mainMapPinButton.offsetHeight;
 var noticeForm = document.querySelector('.notice__form');
 var noticeFormFieldsets = noticeForm.querySelectorAll('fieldset');
-
-var MAIN_MAP_PIN_BUTTON_WIDTH = mainMapPinButton.offsetWidth;
-var MAIN_MAP_PIN_BUTTON_HEIGHT = mainMapPinButton.offsetHeight;
 
 var getMainMapPinButtonDefaultCoordinate = function (elem) {
   var box = elem.getBoundingClientRect();
@@ -236,13 +228,13 @@ var getPinButtonCoordinate = function (pinButton, defaultState) {
   var pinButtonCoordinate = {};
   if (defaultState === true) {
     pinButtonCoordinate = {
-      top: pinButtonDefaultCoordinate.top + MAIN_MAP_PIN_BUTTON_HEIGHT / 2,
-      left: pinButtonDefaultCoordinate.left + MAIN_MAP_PIN_BUTTON_WIDTH / 2
+      top: pinButtonDefaultCoordinate.top + mainMapPinButtonHeight / 2,
+      left: pinButtonDefaultCoordinate.left + mainMapPinButtonWidth / 2
     };
   } else {
     pinButtonCoordinate = {
-      top: pinButtonDefaultCoordinate.top + MAIN_MAP_PIN_BUTTON_HEIGHT + 22,
-      left: pinButtonDefaultCoordinate.left + MAIN_MAP_PIN_BUTTON_WIDTH / 2
+      top: pinButtonDefaultCoordinate.top + mainMapPinButtonHeight + 22,
+      left: pinButtonDefaultCoordinate.left + mainMapPinButtonWidth / 2
     };
   }
 
@@ -263,6 +255,13 @@ var setAddress = function (pinButton, activeState) {
 setAddress(mainMapPinButton, false);
 
 var getActiveState = function () {
+  var pinButtonFragment = document.createDocumentFragment();
+  for (var o = 0; o < similarAdArray.length; o++) {
+    var pin = renderPinButton(similarAdArray[o]);
+    var card = renderMapCard(similarAdArray[o]);
+    onPinButtonClickHandler(pin, card);
+    pinButtonFragment.appendChild(pin);
+  }
   mapPinList.appendChild(pinButtonFragment);
   mapWindow.classList.remove('map--faded');
   setAddress(mainMapPinButton, true);
@@ -270,5 +269,133 @@ var getActiveState = function () {
     noticeFormFieldsets[n].removeAttribute('disabled');
   }
   noticeForm.classList.remove('notice__form--disabled');
+  onRoomNumberOrCapacityInputChange();
 };
 mainMapPinButton.addEventListener('mouseup', getActiveState);
+
+// Validation
+var typeInput = noticeForm.querySelector('#type');
+var priceInput = noticeForm.querySelector('#price');
+var typeInputSelectedValue = typeInput.options[typeInput.selectedIndex].value;
+
+if (typeInputSelectedValue === 'flat') {
+  priceInput.setAttribute('min', '1000');
+} else if (typeInputSelectedValue === 'bungalo') {
+  priceInput.setAttribute('min', '0');
+} else if (typeInputSelectedValue === 'house') {
+  priceInput.setAttribute('min', '5000');
+} else if (typeInputSelectedValue === 'palace') {
+  priceInput.setAttribute('min', '10000');
+}
+
+var changePriceInputMin = function () {
+  if (typeInput.value === 'flat') {
+    priceInput.setAttribute('min', '1000');
+  } else if (typeInput.value === 'bungalo') {
+    priceInput.setAttribute('min', '0');
+  } else if (typeInput.value === 'house') {
+    priceInput.setAttribute('min', '5000');
+  } else if (typeInput.value === 'palace') {
+    priceInput.setAttribute('min', '10000');
+  }
+};
+typeInput.addEventListener('input', changePriceInputMin);
+
+var timeInInput = noticeForm.querySelector('#timein');
+var timeOutInput = noticeForm.querySelector('#timeout');
+
+var changeTimeValue = function (firstSelect, secondSelect) {
+  if (firstSelect.value === '12:00') {
+    secondSelect.selectedIndex = 0;
+  } else if (firstSelect.value === '13:00') {
+    secondSelect.selectedIndex = 1;
+  } else if (firstSelect.value === '14:00') {
+    secondSelect.selectedIndex = 2;
+  }
+};
+timeInInput.addEventListener('input', function () {
+  changeTimeValue(timeInInput, timeOutInput);
+});
+timeOutInput.addEventListener('input', function () {
+  changeTimeValue(timeOutInput, timeInInput);
+});
+
+var roomNumberInput = noticeForm.querySelector('#room_number');
+var capacityInput = noticeForm.querySelector('#capacity');
+
+if (roomNumberInput.options[roomNumberInput.selectedIndex].value !== capacityInput.options[capacityInput.selectedIndex].value) {
+  capacityInput.setCustomValidity('1 комната — «для 1 гостя», 2 комнаты — «для 2 гостей» или «для 1 гостя», 3 комнаты — «для 3 гостей», «для 2 гостей» или «для 1 гостя», 100 комнат — «не для гостей».');
+}
+
+var onRoomNumberOrCapacityInputChange = function () {
+  var capacityInputOptions = capacityInput.options;
+  if (roomNumberInput.value === '100') {
+    for (var u = 0; u < capacityInputOptions.length; u++) {
+      capacityInput.selectedIndex = 3;
+      if (capacityInputOptions[u].value !== '0') {
+        capacityInputOptions[u].disabled = true;
+      } else {
+        capacityInputOptions[u].disabled = false;
+      }
+    }
+  }
+  if (roomNumberInput.value === '1') {
+    for (u = 0; u < capacityInputOptions.length; u++) {
+      capacityInput.selectedIndex = 2;
+      if (capacityInputOptions[u].value !== '1') {
+        capacityInputOptions[u].disabled = true;
+      } else {
+        capacityInputOptions[u].disabled = false;
+      }
+    }
+  }
+  if (roomNumberInput.value === '2') {
+    for (u = 0; u < capacityInputOptions.length; u++) {
+      if (capacityInputOptions[u].value === '0' || capacityInputOptions[u].value === '3') {
+        capacityInputOptions[u].disabled = true;
+      } else {
+        capacityInputOptions[u].disabled = false;
+      }
+    }
+  }
+  if (roomNumberInput.value === '3') {
+    for (u = 0; u < capacityInputOptions.length; u++) {
+      if (capacityInputOptions[u].value === '0') {
+        capacityInputOptions[u].disabled = true;
+      } else {
+        capacityInputOptions[u].disabled = false;
+      }
+    }
+  }
+};
+
+roomNumberInput.addEventListener('input', onRoomNumberOrCapacityInputChange);
+capacityInput.addEventListener('input', onRoomNumberOrCapacityInputChange);
+
+// Reset form
+var resetFormButton = noticeForm.querySelector('.form__reset');
+
+var resetPage = function () {
+  var formFieldsets = noticeForm.querySelectorAll('fieldset');
+  for (var w = 0; w < formFieldsets.length; w++) {
+    formFieldsets[w].disabled = 'disabled';
+  }
+  var formInputs = noticeForm.querySelectorAll('input');
+  for (var e = 0; e < formInputs.length; e++) {
+    formInputs[e].value = '';
+  }
+  var formSelects = noticeForm.querySelectorAll('select');
+  for (var q = 0; q < formSelects.length; q++) {
+    formSelects[q].selectedIndex = 0;
+  }
+  var pinButtons = mapPinList.querySelectorAll('.map__pin');
+  for (var r = 0; r < pinButtons.length; r++) {
+    if (!pinButtons[r].classList.contains('map__pin--main')) {
+      pinButtons[r].parentElement.removeChild(pinButtons[r]);
+    }
+  }
+  noticeForm.classList.add('notice__form--disabled');
+  setAddress(mainMapPinButton, false);
+  mapWindow.classList.add('map--faded');
+};
+resetFormButton.addEventListener('click', resetPage);
