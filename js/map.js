@@ -1,12 +1,15 @@
 'use strict';
 
 (function () {
-  var mapWindow = document.querySelector('.map');
+  var MAIN_MAP_PIN_BUTTON_WIDTH = 62;
+  var MAIN_MAP_PIN_BUTTON_HEIGHT = 62;
+  var MAIN_MAP_PIN_BUTTON_POINTER = 22;
+  var MAP_MIN_HEIGHT = 150;
+  var MAP_MAX_HEIGHT = 500;
 
+  var mapWindow = document.querySelector('.map');
   var mainMapPinButton = mapWindow.querySelector('.map__pin--main');
   var mapPinsPanel = mapWindow.querySelector('.map__pins');
-  var mainMapPinButtonWidth = 62;
-  var mainMapPinButtonHeight = 62;
   var getPosition = function (elem) {
     var position = {
       top: elem.offsetTop,
@@ -22,13 +25,13 @@
     var pinButtonCoordinate = {};
     if (defaultState === true) {
       pinButtonCoordinate = {
-        top: pinButtonDefaultCoordinate.top + (mainMapPinButtonHeight / 2),
-        left: pinButtonDefaultCoordinate.left + (mainMapPinButtonWidth / 2)
+        top: pinButtonDefaultCoordinate.top + (MAIN_MAP_PIN_BUTTON_HEIGHT / 2),
+        left: pinButtonDefaultCoordinate.left + (MAIN_MAP_PIN_BUTTON_WIDTH / 2)
       };
     } else {
       pinButtonCoordinate = {
-        top: pinButtonDefaultCoordinate.top + (mainMapPinButtonHeight + 22),
-        left: pinButtonDefaultCoordinate.left + (mainMapPinButtonWidth / 2)
+        top: pinButtonDefaultCoordinate.top + (MAIN_MAP_PIN_BUTTON_HEIGHT + MAIN_MAP_PIN_BUTTON_POINTER),
+        left: pinButtonDefaultCoordinate.left + (MAIN_MAP_PIN_BUTTON_WIDTH / 2)
       };
     }
 
@@ -74,11 +77,11 @@
       mainMapPinButton.style.top = (mainMapPinButton.offsetTop - shift.y) + 'px';
       mainMapPinButton.style.left = (mainMapPinButton.offsetLeft - shift.x) + 'px';
 
-      if ((startCoords.y + mainMapPinButtonHeight + 22) < 150) {
-        mainMapPinButton.style.top = 150 - mainMapPinButtonHeight - 22 + 'px';
+      if ((startCoords.y + MAIN_MAP_PIN_BUTTON_HEIGHT + MAIN_MAP_PIN_BUTTON_POINTER) < MAP_MIN_HEIGHT) {
+        mainMapPinButton.style.top = MAP_MIN_HEIGHT - MAIN_MAP_PIN_BUTTON_HEIGHT - MAIN_MAP_PIN_BUTTON_POINTER + 'px';
         setAddress(mainMapPinButton, true);
-      } else if ((startCoords.y + mainMapPinButtonHeight + 22) > 500) {
-        mainMapPinButton.style.top = 500 - mainMapPinButtonHeight - 22 + 'px';
+      } else if ((startCoords.y + MAIN_MAP_PIN_BUTTON_HEIGHT + MAIN_MAP_PIN_BUTTON_POINTER) > MAP_MAX_HEIGHT) {
+        mainMapPinButton.style.top = MAP_MAX_HEIGHT - MAIN_MAP_PIN_BUTTON_HEIGHT - MAIN_MAP_PIN_BUTTON_POINTER + 'px';
         setAddress(mainMapPinButton, true);
       }
     };
