@@ -51,6 +51,8 @@
       }
     }
     window.form.form.classList.add('notice__form--disabled');
+    window.map.mainPinButton.style.top = window.map.defaultMainPinButtonPosition.top + 'px';
+    window.map.mainPinButton.style.left = window.map.defaultMainPinButtonPosition.left + 'px';
     window.map.setAddress(window.map.mainPinButton, false);
     window.map.mapWindow.classList.add('map--faded');
   };
