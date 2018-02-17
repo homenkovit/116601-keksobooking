@@ -71,13 +71,16 @@
         y: moveEvt.clientY
       };
 
-      if ((startCoords.y + mainMapPinButtonHeight + 22) < 150 || (startCoords.y + mainMapPinButtonHeight + 22) > 500) {
-        mapPinsPanel.removeEventListener('mousemove', onMouseMove);
-        setAddress(mainMapPinButton, true);
-      }
-
       mainMapPinButton.style.top = (mainMapPinButton.offsetTop - shift.y) + 'px';
       mainMapPinButton.style.left = (mainMapPinButton.offsetLeft - shift.x) + 'px';
+
+      if ((startCoords.y + mainMapPinButtonHeight + 22) < 150) {
+        mainMapPinButton.style.top = 150 - mainMapPinButtonHeight - 22 + 'px';
+        setAddress(mainMapPinButton, true);
+      } else if ((startCoords.y + mainMapPinButtonHeight + 22) > 500) {
+        mainMapPinButton.style.top = 500 - mainMapPinButtonHeight - 22 + 'px';
+        setAddress(mainMapPinButton, true);
+      }
     };
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
