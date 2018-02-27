@@ -2,12 +2,16 @@
 
 (function () {
   var upload = function (data, onLoad, onError) {
-    var URL = 'https://js.dump.academy/keksobooking';
+    var URL = 'https://js.dump.academy/keksobooking/data1';
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      onLoad(xhr.response);
+      if (xhr.status === 200) {
+        onLoad(xhr.response);
+      } else {
+        onError(xhr.status);
+      }
     });
     xhr.addEventListener('error', function () {
       onError(xhr.status);

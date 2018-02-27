@@ -58,13 +58,13 @@
   };
   resetFormButton.addEventListener('click', resetPage);
 
-  var successFormUploadHandler = function (evt) {
-    evt.preventDefault();
-    window.backend.upload(new FormData(window.form.form), resetPage);
-  };
   var errorFormUploadHandler = function (error) {
     console.log(error);
   };
+  var submitFormHandler = function (evt) {
+    evt.preventDefault();
+    window.backend.upload(new FormData(window.form.form), resetPage, errorFormUploadHandler);
+  };
 
-  window.form.form.addEventListener('submit', successFormUploadHandler, errorFormUploadHandler);
+  window.form.form.addEventListener('submit', submitFormHandler);
 })();
