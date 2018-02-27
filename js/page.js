@@ -30,11 +30,6 @@
   };
   window.map.mainPinButton.addEventListener('mouseup', getActiveState);
 
-  window.form.form.addEventListener('submit', function (evt) {
-    evt.preventDefault();
-    window.backend.upload(new FormData(window.form.form), getActiveState);
-  });
-
   var resetFormButton = window.form.form.querySelector('.form__reset');
   var resetPage = function () {
     var formFieldsets = window.form.form.querySelectorAll('fieldset');
@@ -62,4 +57,14 @@
     window.map.mapWindow.classList.add('map--faded');
   };
   resetFormButton.addEventListener('click', resetPage);
+
+  var successFormUploadHandler = function (evt) {
+    evt.preventDefault();
+    window.backend.upload(new FormData(window.form.form), resetPage);
+  };
+  var errorFormUploadHandler = function (error) {
+    console.log(error);
+  };
+
+  window.form.form.addEventListener('submit', successFormUploadHandler, errorFormUploadHandler);
 })();
