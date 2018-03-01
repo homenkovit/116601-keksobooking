@@ -9,7 +9,14 @@
     }
   };
   var errorHandler = function (error) {
-    console.log(error);
+    var errorWindow = document.querySelector('.error-overlay');
+    var errorText = errorWindow.querySelector('.error-text');
+
+    errorText.textContent = 'Ошибка ' + error;
+    errorWindow.classList.remove('hidden');
+    errorWindow.addEventListener('click', function () {
+      errorWindow.classList.add('hidden');
+    });
   };
 
   window.backend.load(succesHandler, errorHandler);
