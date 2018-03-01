@@ -59,7 +59,14 @@
   resetFormButton.addEventListener('click', resetPage);
 
   var errorFormUploadHandler = function (error) {
-    console.log(error);
+    var errorWindow = document.querySelector('.error-overlay');
+    var errorText = errorWindow.querySelector('.error-text');
+
+    errorText.textContent = 'Ошибка ' + error;
+    errorWindow.classList.remove('hidden');
+    errorWindow.addEventListener('click', function () {
+      errorWindow.classList.add('hidden');
+    });
   };
   var submitFormHandler = function (evt) {
     evt.preventDefault();
