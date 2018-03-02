@@ -52,10 +52,6 @@
   var roomNumberInput = noticeForm.querySelector('#room_number');
   var capacityInput = noticeForm.querySelector('#capacity');
 
-  if (roomNumberInput.options[roomNumberInput.selectedIndex].value !== capacityInput.options[capacityInput.selectedIndex].value) {
-    capacityInput.setCustomValidity('1 комната — «для 1 гостя», 2 комнаты — «для 2 гостей» или «для 1 гостя», 3 комнаты — «для 3 гостей», «для 2 гостей» или «для 1 гостя», 100 комнат — «не для гостей».');
-  }
-
   var onRoomNumberInputChange = function () {
     var capacityInputOptions = capacityInput.options;
     if (roomNumberInput.value === '100') {

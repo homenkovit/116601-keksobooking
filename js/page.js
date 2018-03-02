@@ -57,4 +57,21 @@
     window.map.mapWindow.classList.add('map--faded');
   };
   resetFormButton.addEventListener('click', resetPage);
+
+  var errorFormUploadHandler = function (error) {
+    var errorWindow = document.querySelector('.error-overlay');
+    var errorText = errorWindow.querySelector('.error-text');
+
+    errorText.textContent = 'Ошибка ' + error;
+    errorWindow.classList.remove('hidden');
+    errorWindow.addEventListener('click', function () {
+      errorWindow.classList.add('hidden');
+    });
+  };
+  var submitFormHandler = function (evt) {
+    evt.preventDefault();
+    window.backend.upload(new FormData(window.form.form), resetPage, errorFormUploadHandler);
+  };
+
+  window.form.form.addEventListener('submit', submitFormHandler);
 })();
