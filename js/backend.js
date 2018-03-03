@@ -2,7 +2,7 @@
 
 (function () {
   var upload = function (data, onLoad, onError) {
-    var URL = 'https://js.dump.academy/keksobooking/data1';
+    var URL = 'https://js.dump.academy/keksobooking';
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
